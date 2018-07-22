@@ -208,56 +208,56 @@ def cross_val_method_KFold():
 def cross_val_method_ShuffleSplit():
     return ShuffleSplit(n_splits = 10, test_size = 0.3)
 
-def regression_estimator_ols(stages = []):
+def regression_estimator_ols(stages = None):
     stages.extend([
-                regression_standardisation(),               
+                regression_standardisation(),
                 ('estimator', LinearRegression())
             ])
 
     return Pipeline(stages)
 
-def regression_estimator_Lasso(stages = [], alpha = 0.3):
+def regression_estimator_Lasso(stages = None, alpha = 0.3):
     stages.extend([
-                regression_standardisation(),               
+                regression_standardisation(),
                 ('estimator', Lasso( alpha = alpha ))
             ])
 
     return Pipeline(stages)
 
-def regression_estimator_LassoCV(stages = []):
+def regression_estimator_LassoCV(stages = None):
     stages.extend([
-                regression_standardisation(),               
+                regression_standardisation(),
                 ('estimator', LassoCV( cv = 10 ))
             ])
 
     return Pipeline(stages)
 
-def regression_estimator_Ridge(stages = [], alpha = 0.3):
+def regression_estimator_Ridge(stages = None, alpha = 0.3):
     stages.extend([
-                regression_standardisation(),               
+                regression_standardisation(),
                 ('estimator', Ridge( alpha = alpha ))
             ])
 
     return Pipeline(stages)
 
-def regression_estimator_RidgeCV(stages = []):
+def regression_estimator_RidgeCV(stages = None):
     stages.extend([
-                regression_standardisation(),               
+                regression_standardisation(),
                 ('estimator', RidgeCV( cv = 10 ))
             ])
 
     return Pipeline(stages)
 
-def regression_estimator_knn(stages = [], cross_val_method = 10, scoring = 'neg_mean_squared_error'):
+def regression_estimator_knn(stages = None, cross_val_method = 10, scoring = 'neg_mean_squared_error'):
     stages.extend([
-                regression_standardisation(),               
+                regression_standardisation(),
                 ('estimator', KNeighborsRegressor(weights = inv_distances))
             ])
 
     knn = Pipeline(stages)
     return GridSearchCV(knn, knn_parameters(), scoring = scoring, cv = cross_val_method)
 
-def regression_estimators(stages = [], cross_val_method = 10, scoring = 'neg_mean_squared_error'):
+def regression_estimators(stages = None, cross_val_method = 10, scoring = 'neg_mean_squared_error'):
     return {
         'OLS \t\t' : regression_estimator_ols(stages),
         'Lasso \t\t': regression_estimator_LassoCV(stages),
@@ -281,7 +281,7 @@ def cross_val_StratifiedKFold():
 
 def classification_estimator_LogisticRegression(stages1, cv):
     stages1.extend([
-                get_standardisation(),               
+                get_standardisation(),
                 ('estimator', LogisticRegressionCV( Cs = log_reg_parameters(), penalty="l2", cv = cross_val_method))
             ])
 
@@ -289,7 +289,7 @@ def classification_estimator_LogisticRegression(stages1, cv):
 
 def classification_estimator_LogisticRegression_l1(stages2, cv):
     stages2.extend([
-                get_standardisation(),               
+                get_standardisation(),
                 ('estimator', LogisticRegressionCV( Cs = log_reg_parameters(), penalty = 'l1', solver='liblinear', cv = cross_val_method ))
             ])
 
@@ -297,18 +297,18 @@ def classification_estimator_LogisticRegression_l1(stages2, cv):
 
 def classification_estimator_KNeighborsClassifier(stages3 = [], cross_val_method = 10, scoring = 'accuracy'):
     stages3.extend([
-                get_standardisation(),               
+                get_standardisation(),
                 ('estimator', KNeighborsClassifier(weights = inv_distances))
             ])
 
     knn = Pipeline(stages3)
     return GridSearchCV(knn, knn_parameters(), scoring = scoring, cv = cross_val_method)
 
-def classification_estimators(stages = [], cross_val_method = 10, scoring = 'accuracy'):
+def classification_estimators(stages = None, cross_val_method = 10, scoring = 'accuracy'):
     stages1 = stages.copy()
     stages2 = stages.copy()
     stages3 = stages.copy()
-    
+
     return {
         'l1' : classification_estimator_LogisticRegression_l1(stages1, cross_val_method),
         'l2' : classification_estimator_LogisticRegression(stages2, cross_val_method),
